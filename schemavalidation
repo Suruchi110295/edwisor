@@ -1,0 +1,31 @@
+function validate(schema , validatationObj){
+      let errors = [];
+      for(key in schema){
+         let validationRuleObj = schema[key];
+         let inputValue = validationObj[key] ? validationObj[key] : null;
+         for(rule in validationRuleObj){
+               let check = validateValueAgainstType(rule,validationRuleObj[rule],inputValue)
+               if(check && check.success == false){
+                  errors.push(check.message)
+               }
+         }
+     }
+     if(errors.length > 0){
+        console.log("Error" + errors)
+     }
+}
+
+function validateValueAgainstType(validationKey,validationValue,inputObjKey){
+    switch(validationKey){
+        case "type" : let status = (typeof inputObjKey == validationValue) ? true : false;
+                      return ((status == true) ? {success : true,message : "Success"} : {success : false,message : validationKey+"has invalid datatype"})
+                      break;
+        case "required" : let status1 = (inputObjKey ? ((inputObjKey.trim() == null || inputObjKey.trim() == "" ) ? false : true) : false)
+                          return ((status1 == validationValue) ? {success : true,message : "Success"} : {success : false,message : validationKey+"is required"})
+                          break;
+       case "enum" : let status2 = (validationValue.indexOf(inputObjKey) > -1 ) ? true : false
+                     return ((status2 == true) ? {success : true,message : "Success"} : {success : false,message : "value doesn't exists in specified enum"})
+                     break;
+        default : break;
+    }
+}
